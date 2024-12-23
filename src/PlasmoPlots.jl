@@ -4,7 +4,7 @@ using Statistics
 using Plasmo
 using Plots
 using NetworkLayout
-using GeometryBasics:Point2f0,Point
+using GeometryBasics: Point2f0, Point
 using Colors
 using Graphs
 

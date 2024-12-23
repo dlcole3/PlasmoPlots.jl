@@ -3,7 +3,7 @@
 # PlasmoPlots
 
 ## Overview
-PlasmoPlots.jl provides specialized functions to plot `OptiGraph` optimization models created with [Plasmo.jl](https://zavalab.github.io/Plasmo.jl).
+PlasmoPlots.jl provides specialized functions to plot `OptiGraph` optimization models created with [Plasmo.jl](https://github.com/plasmo-dev/Plasmo.jl).
 The package uses [Plots.jl](https://github.com/JuliaPlots/Plots.jl) and consequently supports its different plotting backends.
 
 Currently, the package provides two functions to visualize optigraphs.  These are:
@@ -14,12 +14,12 @@ Currently, the package provides two functions to visualize optigraphs.  These ar
 PlasmoPlots.jl can be installed with following command using the Julia package manager:
 
 ```julia
-pkg> add https://github.com/jalving/PlasmoPlots.jl.git
+pkg> add PlasmoPlots
 ```
 
-## Simple Examples
+## Examples
 
-### Plotting a Simple OptiGraph
+### Plotting an OptiGraph
 
 The following example shows how to plot a very simple optigraph containing 3 nodes and one hyperedge between them.
 ```julia
@@ -30,38 +30,40 @@ gr()
 #create an optigraph
 graph = OptiGraph()
 
-@optinode(graph1,n1)
+@optinode(graph,n1)
 @variable(n1, y >= 2)
 @variable(n1,x >= 0)
 @constraint(n1,x + y >= 3)
 @objective(n1, Min, y)
 
-@optinode(graph1,n2)
+@optinode(graph,n2)
 @variable(n2, y)
 @variable(n2,x >= 0)
 @constraint(n2,x + y >= 3)
 @objective(n2, Min, y)
 
-@optinode(graph1,n3)
+@optinode(graph,n3)
 @variable(n3, y )
 @variable(n3,x >= 0)
 @constraint(n3,x + y >= 3)
 @objective(n3, Min, y)
 
-@linkconstraint(graph1, n1[:x] + n2[:x] + n3[:x] == 3)
+@linkconstraint(graph, n1[:x] + n2[:x] + n3[:x] == 3)
 
 #plot the graph layout using `layout_plot`
-plt_graph1 = layout_plot(graph1,
+plt_graph1 = layout_plot(graph,
 node_labels = true,
 markersize = 60,
 labelsize = 30,
 linewidth = 4,
-layout_options = Dict(:tol => 0.01,:iterations => 2));
+layout_options = Dict(:tol=>0.01, :iterations=>2));
 
 #plot the matrix layout using `matrix_plot`
-plt_matrix1 = matrix_plot(graph1,
-node_labels = true,
-markersize = 30);
+plt_matrix1 = matrix_plot(
+    graph,
+    node_labels = true,
+    markersize = 30
+);
 ```
 
 <img src="assets/simple_plot_layout.png" width="250" height="250">  <img src="assets/simple_matrix_layout.png" width="250" height="250">
@@ -147,19 +149,14 @@ graph0 = OptiGraph()
 @variable(n0,x)
 @constraint(n0,x >= 0)
 
-add_subgraph!(graph0,graph1)
-add_subgraph!(graph0,graph2)
-add_subgraph!(graph0,graph3)
+add_subgraph(graph0,graph1)
+add_subgraph(graph0,graph2)
+add_subgraph(graph0,graph3)
 @linkconstraint(graph0,n3[:x] + n5[:x] + n7[:x] == 10)
 
 @linkconstraint(graph0,n0[:x] + n3[:x] == 3)
 @linkconstraint(graph0,n0[:x] + n5[:x] == 5)
 @linkconstraint(graph0,n0[:x] + n7[:x] == 7)
-
-#set the node labels which get plotted
-for (i,node) in enumerate(all_nodes(graph0))
-    node.label = "n$i"
-end
 
 #plot the graph layout using `layout_plot` which will show subgraphs
 plt_graph2 = layout_plot(graph0,
