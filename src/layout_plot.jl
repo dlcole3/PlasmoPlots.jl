@@ -10,6 +10,8 @@
         markersize=30,
         labelsize=20, 
         markercolor=:grey,
+        use_seed=true,
+        seed=1,
         layout_options = Dict(
             :tol => 0.01,
             :C => 2,
@@ -40,6 +42,8 @@ Plot a graph layout of the optigraph `graph`. The following keyword arguments ca
 * `markersize = 30`: the markersize which determines the size of each node in `graph`.
 * `labelsize = 20`: the size for each node label.  Only active if `node_labels = true`.
 * `markercolor = :grey`: the color for each node.
+* `use_seed = true`: whether to use a random seed for reproducibility in generating initial positions of nodes
+* `seed = 1`: value of the random seed to use if `use_seed=true`
 
 * `layout_options = Dict(:tol => 0.01,:C => 2, :K => 4, :iterations => 2)`: dictionary with options for the layout algorithm.
     * `tol`: permitted distance between a current and calculated co-ordinate.
@@ -66,6 +70,8 @@ function layout_plot(
     markersize=30,
     labelsize=20,
     markercolor=:grey,
+    use_seed=true,
+    seed=1,
     layout_options=Dict(:tol => 0.01, :C => 2, :K => 4, :iterations => 2),
     plt_options=Dict(
         :legend => false,
@@ -106,8 +112,9 @@ function layout_plot(
         markercolor = markercolor
     end
 
-    #hypergraph,hyper_map = hyper_graph(graph)
-    # clique_graph,clique_map = clique_expansion(hypergraph)
+    if use_seed
+        Random.seed!(seed)
+    end
 
     clique_proj = clique_projection(graph)
     simple_graph = clique_proj.projected_graph
@@ -161,6 +168,8 @@ end
         markersize=30,
         labelsize=20, 
         markercolor=:grey,
+        use_seed=true,
+        seed=1,
         layout_options = Dict(
             :tol => 0.01,
             :C => 2,
@@ -193,6 +202,8 @@ function layout_plot(
     markersize=30,
     labelsize=20,
     markercolor=:grey,
+    use_seed=true,
+    seed=1,
     layout_options=Dict(:tol => 0.01, :C => 2, :K => 4, :iterations => 2),
     plt_options=Dict(
         :legend => false,
@@ -248,6 +259,10 @@ function layout_plot(
     #LAYOUT
     clique_proj = clique_projection(graph)
     simple_graph = clique_proj.projected_graph
+
+    if use_seed
+        Random.seed!(seed)
+    end
 
     startpositions = Array{Point{2,Float32},1}()
     for i in 1:Graphs.nv(simple_graph)
